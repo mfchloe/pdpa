@@ -6,19 +6,19 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [results] = useState([
     {
-      section: "PDPA Sec 26D",
+      section: "PDPA s 26D",
       text: "Notification required for data breaches affecting 500 or more individuals must be made to the Commission within 72 hours of discovery. The notification must include details of the breach, affected data, and remedial measures taken.",
       source: "PDPA PDF",
       page: 12,
     },
     {
-      section: "Schedule 1",
-      text: "Consent is deemed given when an individual voluntarily provides personal data for a purpose that a reasonable person would consider appropriate in the circumstances, and the individual has been notified of the purpose.",
+      section: "First Schedule Part 1",
+      text: "Personal data is in the individual's vital interest if the personal data is necessary to respond to an emergency that threatens the life, health or safety of the individual or another individual.",
       source: "PDPA PDF",
       page: 3,
     },
     {
-      section: "PDPA Sec 13",
+      section: "PDPA s 13",
       text: "Organizations must implement appropriate security arrangements to protect personal data in their possession or under their control against unauthorized access, collection, use, disclosure, copying, modification, disposal or similar risks.",
       source: "PDPA PDF",
       page: 8,
@@ -56,7 +56,8 @@ export default function App() {
   const styles = {
     container: {
       minHeight: "100vh",
-      background: "linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%)",
+      background:
+        "linear-gradient(160deg, #99caf2 0%, #ffffff 15%, #ffffff 85%, #99caf2 100%)", // Mirrored gradient
       fontFamily:
         '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     },
@@ -123,8 +124,9 @@ export default function App() {
       position: "relative",
     },
     textarea: {
-      width: "100%",
-      height: "256px",
+      width: "95%",
+      height: "120px",
+      gap: "8px",
       padding: "16px",
       border: "2px solid #e2e8f0",
       borderRadius: "12px",
@@ -200,7 +202,7 @@ export default function App() {
     },
     summaryContent: {
       padding: "16px",
-      height: "128px",
+      height: "60px",
       overflowY: "auto",
       fontSize: "14px",
       lineHeight: "1.6",
@@ -375,8 +377,18 @@ export default function App() {
             </div>
             <p style={styles.subtitle}>
               Describe your scenario to find relevant PDPA sections and get
-              AI-powered insights
+              AI-powered insights. Here is a list of guiding questions:
             </p>
+            <ul style={styles.subtitle}>
+              <li>What is the nature of your business?</li>
+              <li>What data is involved?</li>
+              <li>Who handled the data?</li>
+              <li>Was there consent, and for what purpose?</li>
+              <li>How was the data safeguarded and retained?</li>
+              <li>
+                What events happened (complaint, misuse, loss, or breach)?
+              </li>
+            </ul>
           </div>
 
           {/* Query Input */}
@@ -386,7 +398,7 @@ export default function App() {
               <textarea
                 className="textarea"
                 style={styles.textarea}
-                placeholder="e.g., Our company experienced a data breach affecting customer email addresses and phone numbers. What are our notification obligations under PDPA?"
+                placeholder="In your search, please include what business you are involved in, what kind of personal data was involved, current actions taken in handling the data, and the stakeholders involved."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyPress={handleKeyPress}

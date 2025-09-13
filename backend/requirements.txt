@@ -1,0 +1,9 @@
+fastapi
+pydantic
+faiss-cpu
+openai
+numpy
+uvicorn
+requests
+PyPDF2
+chromadb
