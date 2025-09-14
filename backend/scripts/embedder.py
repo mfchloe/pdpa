@@ -1,17 +1,21 @@
-# embedder.py
 import json
 import chromadb
-from openai import OpenAI
 import uuid
+import openai
+import os
+from dotenv import load_dotenv
 
-# Initialize clients
-openai.api_key = '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'
+# Load environment variables from .env
+load_dotenv()
+
+openai.api_key = os.getenv("API_KEY")
+
 chroma_client = chromadb.PersistentClient(path="./chroma_db")
 
 def embed_text(text):
     """Generate embeddings using OpenAI"""
     try:
-        response = openai_client.embeddings.create(
+        response = openai.embeddings.create(
             model="text-embedding-ada-002",
             input=text
         )
@@ -51,7 +55,7 @@ def embed_documents():
             embedding = embed_text(text)
             if embedding is None:
                 continue
-                
+            
             documents.append(text)
             metadatas.append(metadata)
             ids.append(str(uuid.uuid4()))

@@ -1,16 +1,25 @@
-# pdf_extractor.py
 import PyPDF2
 import os
 
 def extract_text_from_pdf(pdf_path):
-    """Extract text from PDF and return as dictionary with page numbers as keys"""
+    """Extract text from PDF and return as dictionary with section numbers as keys"""
     try:
         with open(pdf_path, 'rb') as file:
             reader = PyPDF2.PdfReader(file)
-            text_by_page = {}
+            text_by_section = {}
+            section = None
             for page_num, page in enumerate(reader.pages):
-                text_by_page[page_num + 1] = page.extract_text()
-            return text_by_page
+                text = page.extract_text()
+                lines = text.split('\n')
+                for line in lines:
+                    # Detect section headings in the format S1, S2, S3...
+                    if line.strip().startswith('S'):
+                        section = line.strip()  # Assign current section heading
+                    if section:
+                        if section not in text_by_section:
+                            text_by_section[section] = ""
+                        text_by_section[section] += line.strip() + " "
+            return text_by_section
     except FileNotFoundError:
         print(f"Error: PDF file not found at {pdf_path}")
         return {}
@@ -35,11 +44,11 @@ def save_text_from_pdfs():
         extracted_texts[doc_type] = extract_text_from_pdf(pdf_path)
         
         # Save to file with proper format
-        output_file = f"{doc_type}_text_by_page.txt"
+        output_file = f"{doc_type}_text_by_section.txt"
         with open(output_file, "w", encoding='utf-8') as f:
-            for page_num, text in extracted_texts[doc_type].items():
-                f.write(f"Page {page_num}:\n{text}\n\n")
-        print(f"Saved {len(extracted_texts[doc_type])} pages to {output_file}")
+            for section, text in extracted_texts[doc_type].items():
+                f.write(f"Section {section}:\n{text}\n\n")
+        print(f"Saved {len(extracted_texts[doc_type])} sections to {output_file}")
     
     return extracted_texts
 

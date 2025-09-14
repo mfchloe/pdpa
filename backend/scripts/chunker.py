@@ -1,28 +1,27 @@
-# chunker.py
 import openai
 import os
 import json
 from openai import OpenAI
 
 # Initialize OpenAI client (updated API)
-openai.api_key = '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'
+openai.api_key = os.getenv("API_KEY")
 
-def load_text_by_page(filename):
-    """Load text file and parse it back into page dictionary"""
-    text_by_page = {}
+def load_text_by_section(filename):
+    """Load text file and parse it back into section dictionary"""
+    text_by_section = {}
     try:
         with open(filename, "r", encoding='utf-8') as f:
             content = f.read()
         
         # Parse the saved format back into dictionary
-        pages = content.split("Page ")[1:]  # Skip empty first element
-        for page_content in pages:
-            lines = page_content.split('\n', 1)
-            page_num = int(lines[0].replace(':', ''))
+        sections = content.split("Section ")[1:]  # Skip empty first element
+        for section_content in sections:
+            lines = section_content.split('\n', 1)
+            section = lines[0].replace(':', '').strip()
             text = lines[1] if len(lines) > 1 else ""
-            text_by_page[page_num] = text.strip()
+            text_by_section[section] = text.strip()
         
-        return text_by_page
+        return text_by_section
     except FileNotFoundError:
         print(f"Error: File {filename} not found")
         return {}
@@ -50,17 +49,17 @@ def chunk_documents():
     """Chunk all documents and save with metadata"""
     documents = {
         'statute': {
-            'file': "statute_text_by_page.txt",
+            'file': "statute_text_by_section.txt",
             'source': "PDPA (Main Act)",
             'output': "statute_chunks_with_metadata.json"
         },
         'schedules': {
-            'file': "schedules_text_by_page.txt", 
+            'file': "schedules_text_by_section.txt", 
             'source': "Personal Data Protection (Breach Notification) Regulations",
             'output': "schedules_chunks_with_metadata.json"
         },
         'regulations': {
-            'file': "regulations_text_by_page.txt",
+            'file': "regulations_text_by_section.txt",
             'source': "Regulations", 
             'output': "regulations_chunks_with_metadata.json"
         }
@@ -70,20 +69,19 @@ def chunk_documents():
     
     for doc_type, doc_info in documents.items():
         print(f"Chunking {doc_type}...")
-        text_by_page = load_text_by_page(doc_info['file'])
+        text_by_section = load_text_by_section(doc_info['file'])
         
         doc_chunks = []
-        for page_num, text in text_by_page.items():
-            if text.strip():  # Only process non-empty pages
+        for section, text in text_by_section.items():
+            if text.strip():  # Only process non-empty sections
                 chunks = simple_chunk_text(text)
                 for i, chunk in enumerate(chunks):
                     chunk_data = {
                         'text': chunk,
                         'metadata': {
-                            'section': f"Page {page_num}, Chunk {i+1}",
+                            'section': section,
                             'source': doc_info['source'],
-                            'page': page_num,
-                            'chunk_id': f"{doc_type}_{page_num}_{i+1}"
+                            'chunk_id': f"{doc_type}_{section}_{i+1}"
                         }
                     }
                     doc_chunks.append(chunk_data)
